@@ -13,6 +13,10 @@ const FLOW = {
   LOGIN: 'LOGIN',
   SIGNUP: 'SIGNUP',
 };
+
+const EmailRegex = /^([\\.a-zA-Z0-9_\\-])+@([a-zA-Z0-9_\\-])+(([a-zA-Z0-9_\\-])*\.([a-zA-Z0-9_ \\-])+)+$/;
+const PasswordRegex = /^[^\s]{8,}$/;
+
 class NewSignup extends Component {
   static propTypes = {
     doSignup: PropTypes.func,
@@ -136,31 +140,25 @@ class NewSignup extends Component {
     });
   }
   validator(fields) {
-    const { email, password, errors } = this.state;
-    const re = /^([\\.a-zA-Z0-9_\\-])+@([a-zA-Z0-9_\\-])+(([a-zA-Z0-9_\\-])*\.([a-zA-Z0-9_ \\-])+)+$/;
-    const passwordRe = /^[^\s]{8,}$/;
+    const { email, password } = this.state;
+    const errors = {};
     fields.forEach((field) => {
       if (field === 'email') {
         if (!email) {
           errors.email = 'Email address is required';
-        } else if (!re.test(email)) {
+        } else if (!EmailRegex.test(email)) {
           errors.email = 'Please enter a valid email address';
-        } else {
-          delete errors.email;
         }
       } else if (field === 'password') {
         if (!password) {
           errors.password = 'Password is required';
-        } else if (!passwordRe.test(password)) {
+        } else if (!PasswordRegex.test(password)) {
           errors.password = 'Must be greater than 7 characters (Spaces not allowed)';
-        } else {
-          delete errors.password;
         }
       }
     });
-    this.setState({
-      errors,
-    });
+
+    this.setState({ errors });
   }
   render() {
     const { emailExists, email, showPasswordField, flow, errors } = this.state;
