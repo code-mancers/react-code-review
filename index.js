@@ -81,32 +81,20 @@ class NewSignup extends Component {
       emailExists: !emailExists,
     });
   }
+  componentWillReceiveProps(nextProps) {
+    // !== won't work here, but I'm using it as an example. Check something
+    // like `shallowEqual` from react source code or underscore library
+    const didChange = this.props.emailCheckResponse !== nextProps.emailCheckResponse;
+    if (didChange) {
+      this.setState(...nextProps.emailCheckResponse);
+    }
+  }
   checkEmail(e) {
     e.preventDefault();
     this.validator(['email']);
     const { email, errors } = this.state;
     if (!errors.email) {
       this.props.checkEmailExistenceAction({ email })
-        .then((response) => {
-          if (response.data.external_id) {
-            this.setState({
-              showPasswordField: true,
-              flow: FLOW.LOGIN,
-              emailExists: false,
-            });
-          } else {
-            this.setState({
-              showPasswordField: true,
-              flow: FLOW.SIGNUP,
-              emailExists: false,
-            });
-          }
-        })
-        .catch(() => {
-          this.setState({
-            emailExists: true,
-          });
-        });
     }
   }
   doLogin(e) {
@@ -294,7 +282,7 @@ class NewSignup extends Component {
 }
 
 function mapStateToProps (state) {
-  return { emailExistState: state.emailCheckResponse };
+  return { emailCheckResponse: state.emailCheckResponse };
 }
 
 export default connect(state, {
