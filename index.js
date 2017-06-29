@@ -294,7 +294,12 @@ class NewSignup extends Component {
     );
   }
 }
-export default connect(undefined, {
+
+function mapStateToProps (state) {
+  return { emailExistState: state.emailCheckResponse };
+}
+
+export default connect(state, {
   doLogin,
   doSignup,
   checkEmailExistenceAction,
